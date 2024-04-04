@@ -36,7 +36,7 @@
   dellemc.os9.os9_config:
     lines:
       - "interface {{ port_name }}"
-      - "spanning-tree rstp edge-port"
+      - "spanning-tree rstp edge-port bpduguard"
   connection: network_cli
   when: stp_edge
 
