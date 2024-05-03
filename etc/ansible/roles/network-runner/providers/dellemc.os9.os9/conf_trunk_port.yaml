@@ -14,6 +14,8 @@
     lines:
       - "default interface {{ port_name }}"
   connection: network_cli
+  retries: 5
+  delay: 2
 
 - name: "dellemc.os9: reassign description"
   dellemc.os9.os9_config:
