@@ -9,6 +9,55 @@
   ansible.builtin.set_fact:
     port_description: "{{ port_description_cmd.stdout[0] | regex_search('(?<=description ).+?(?=[\\n\\r])') }}"
 
+- name: "dellemc.os9: get existing vlans from running config"
+  dellemc.os9.os9_command:
+    commands: "show interfaces switchport {{ port_name }}"
+  register: port_vlans_cmd
+  connection: network_cli
+
+- name: "dellemc.os9: parse untagged vlan and tagged vlans from running config"
+  ansible.builtin.set_fact:
+    port_has_untagged: false
+    port_untagged: "{{ port_vlans_cmd.stdout[0] | regex_search('U\\s+(\\d+(?=[\\n\\r]|$))', '\\1') }}"
+    port_has_tagged: false
+    port_tagged: "{{ port_vlans_cmd.stdout[0] | regex_search('T\\s+([\\d,-]+(?=[\\n\\r]|$))', '\\1') }}"
+
+- name: "dellemc.os9: check if untagged vlan was found"
+  ansible.builtin.set_fact:
+    port_untagged_str: "{{ port_untagged[0] }}"
+    port_has_untagged: true
+  when: ( port_untagged is iterable ) and ( port_untagged is not string ) and ( port_untagged | length > 0 ) and ( port_untagged[0] != "1" )
+
+- name: "dellemc.os9: check if tagged vlans were found"
+  ansible.builtin.set_fact:
+    port_tagged_str: "{{ port_tagged[0] }}"
+    port_has_tagged: true
+    port_tagged_list: []
+  when: ( port_tagged is iterable ) and ( port_tagged is not string ) and ( port_tagged | length > 0 )
+
+- name: "dellemc.os9: parse ranges for tagged vlans"
+  ansible.builtin.set_fact:
+    port_tagged_list: "{{ port_tagged_list + (range(item.split('-')[0] | int, (item.split('-')[1] | int + 1)) | list if '-' in item else [item]) | map('string') }}"
+  loop: "{{ port_tagged_str.split(',') }}"
+  when: port_has_tagged
+
+- name: "dellemc.os9: Remove untagged vlan from port"
+  dellemc.os9.os9_config:
+    lines:
+      - "no untagged {{ port_name }}"
+    parents: ["interface Vlan {{ port_untagged_str }}"]
+  connection: network_cli
+  when: port_has_untagged
+
+- name: "dellemc.os9: Remove tagged vlans from port"
+  dellemc.os9.os9_config:
+    lines:
+      - "no tagged {{ port_name }}"
+    parents: ["interface Vlan {{ item }}"]
+  loop: "{{ port_tagged_list }}"
+  connection: network_cli
+  when: port_has_tagged
+
 - name: "dellemc.os9: reset interface to default"
   dellemc.os9.os9_config:
     lines:
