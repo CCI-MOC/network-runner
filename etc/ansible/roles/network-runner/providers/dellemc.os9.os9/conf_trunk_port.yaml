@@ -9,13 +9,19 @@
   ansible.builtin.set_fact:
     port_description: "{{ port_description_cmd.stdout[0] | regex_search('(?<=description ).+?(?=[\\n\\r])') }}"
 
+- name: "dellemc.os9: Remove existing vlans from port"
+  dellemc.os9.os9_config:
+    lines:
+      - "no tagged {{ port_name }}"
+      - "no untagged {{ port_name }}"
+    parents: ["interface range Vlan 2-4094"]
+  ignore_errors: true
+
 - name: "dellemc.os9: reset interface to default"
   dellemc.os9.os9_config:
     lines:
       - "default interface {{ port_name }}"
   connection: network_cli
-  retries: 5
-  delay: 2
 
 - name: "dellemc.os9: reassign description"
   dellemc.os9.os9_config:
