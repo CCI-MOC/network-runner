@@ -1,7 +1,4 @@
 ---
-- name: "dellemcos9: create vlan"
-  dellemc.os9.os9_config:
-    lines:
-      - "interface vlan {{ _vlan_id }}"
-      - "name {{ _vlan_name }}"
-  connection: network_cli
+- name: "dellemc.os9: Create vlan"
+  ansible.builtin.debug:
+    msg: "Creating VLAN skipped because it is intended to already exist on the switch"
