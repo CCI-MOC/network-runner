@@ -1,6 +1,4 @@
 ---
-- name: "dellemcos9: delete vlan"
-  dellemc.os9.os9_config:
-    lines:
-      - "no interface vlan {{ _vlan_id }}"
-  connection: network_cli
+- name: "dellemc.os9: Delete VLAN"
+  ansible.builtin.debug:
+    msg: "Delete VLAN skipped because it is intended to remain on the switch"
