@@ -1,0 +1,14 @@
+---
+- name: "nvue: Configure access port"
+  nvidia.nvue.command:
+    commands:
+      - set interface {{ port_name }} bridge domain br_default access {{ _vlan_id }}
+      - set interface {{ port_name }} bridge domain br_default stp admin-edge on
+      - set interface {{ port_name }} bridge domain br_default stp bpdu-guard on
+  connection: ssh
+
+- name: "nvue: Apply and save config"
+  nvidia.nvue.command:
+    commands:
+      - config apply
+  connection: ssh
