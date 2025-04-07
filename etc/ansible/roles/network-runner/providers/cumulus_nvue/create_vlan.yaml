@@ -1,0 +1,4 @@
+---
+- name: "nvue: Create vlan"
+  ansible.builtin.debug:
+    msg: "Creating VLAN skipped because it is intended to already exist on the switch"

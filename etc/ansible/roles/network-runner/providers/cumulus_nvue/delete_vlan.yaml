@@ -1,0 +1,4 @@
+---
+- name: "nvue: Delete VLAN"
+  ansible.builtin.debug:
+    msg: "Delete VLAN skipped because it is intended to remain on the switch"

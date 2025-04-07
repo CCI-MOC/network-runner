@@ -1,0 +1,12 @@
+---
+- name: "nvue: Delete port"
+  nvidia.nvue.command:
+    commands:
+      - unset interface {{ port_name }} bridge
+  connection: ssh
+
+- name: "nvue: Apply and save config"
+  nvidia.nvue.command:
+    commands:
+      - config apply
+  connection: ssh
