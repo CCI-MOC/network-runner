@@ -2,10 +2,18 @@
 - name: "nvue: Configure trunk port"
   nvidia.nvue.command:
     commands:
-      - set interface {{ port_name }} bridge domain br_default vlan {{ _vlan_id }}
+      - set interface {{ port_name }} bridge domain br_default untagged {{ _vlan_id}}
       - set interface {{ port_name }} bridge domain br_default stp admin-edge on
       - set interface {{ port_name }} bridge domain br_default stp bpdu-guard on
   connection: ssh
+
+- name: "nvue: Add trunk vlans"
+  nvidia.nvue.command:
+    commands:
+      - set interface {{ port_name }} bridge domain br_default vlan {{ t_vlan }}
+  loop: "{{ trunked_vlans }}"
+  loop_control:
+    loop_var: t_vlan
 
 - name: "nvue: Apply and save config"
   nvidia.nvue.command:
