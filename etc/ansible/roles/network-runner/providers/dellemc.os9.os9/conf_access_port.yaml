@@ -22,3 +22,7 @@
       - "interface vlan {{ _vlan_id }}"
       - "untagged {{ port_name }}"
   connection: network_cli
+
+- name: "dellemc.os9: save config"
+  dellemc.os9.os9_config:
+    save: true

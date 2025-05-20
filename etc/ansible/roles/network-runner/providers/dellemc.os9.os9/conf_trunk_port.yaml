@@ -33,3 +33,7 @@
   loop_control:
     loop_var: t_vlan
   connection: network_cli
+
+- name: "dellemc.os9: save config"
+  dellemc.os9.os9_config:
+    save: true
