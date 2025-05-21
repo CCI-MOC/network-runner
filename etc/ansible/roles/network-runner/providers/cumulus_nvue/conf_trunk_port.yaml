@@ -4,7 +4,7 @@
     commands:
       - set interface {{ port_name }} bridge domain br_default untagged {{ _vlan_id}}
       - set interface {{ port_name }} bridge domain br_default stp admin-edge on
-      - set interface {{ port_name }} bridge domain br_default stp bpdu-guard on
+      - set interface {{ port_name }} bridge domain br_default stp bpdu-filter on
   connection: ssh
 
 - name: "nvue: Add trunk vlans"
