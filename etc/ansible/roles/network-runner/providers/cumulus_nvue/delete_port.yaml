@@ -3,6 +3,7 @@
   nvidia.nvue.command:
     commands:
       - unset interface {{ port_name }} bridge
+      - set interface {{ port_name }} link state down
   connection: ssh
 
 - name: "nvue: Apply and save config"
