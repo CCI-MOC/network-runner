@@ -50,3 +50,7 @@
     parents: ["interface {{ port_name }}"]
   connection: network_cli
   when: port_description != ""
+
+- name: "dellemc.os9: save config"
+  dellemc.os9.os9_config:
+    save: true
